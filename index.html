@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horas de trabajo Lautaro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Horas de trabajo Lautaro</h1>
+        <form id="work-hours-form">
+            <label for="fecha">Día:</label>
+            <input type="date" id="fecha" required>
+
+            <label for="lugar">Lugar de trabajo:</label>
+            <input type="text" id="lugar" placeholder="Ej: Oficina" required>
+
+            <label for="ingreso">Hora de Ingreso:</label>
+            <input type="time" id="ingreso" required>
+
+            <label for="egreso">Hora de Egreso:</label>
+            <input type="time" id="egreso" required>
+
+            <label for="tarifa">Tarifa por Hora:</label>
+            <input type="number" id="tarifa" placeholder="Ej: 2700" required>
+
+            <button type="button" onclick="registrarTrabajo()">Registrar Trabajo</button>
+        </form>
+
+        <div id="resultado">
+            <h2>Registro de Trabajo</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Día</th>
+                        <th>Lugar</th>
+                        <th>Horas Trabajadas</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="registro">
+                    <!-- Aquí se irán añadiendo las filas -->
+                </tbody>
+            </table>
+            <h2>Total Mensual: <span id="totalMensual">$0.00</span></h2>
+        </div>
+    </div>
+
+    <script>
+        let totalMensual = 0;
+
+        function registrarTrabajo() {
+            const fecha = document.getElementById('fecha').value;
+            const lugar = document.getElementById('lugar').value;
+            const ingreso = document.getElementById('ingreso').value;
+            const egreso = document.getElementById('egreso').value;
+            const tarifa = parseFloat(document.getElementById('tarifa').value);
+
+            // Convertir las horas a minutos
+            const ingresoMinutos = convertirHoraAMinutos(ingreso);
+            const egresoMinutos = convertirHoraAMinutos(egreso);
+
+            // Calcular la diferencia en horas
+            const horasTrabajadas = (egresoMinutos - ingresoMinutos) / 60;
+
+            // Calcular el total a cobrar
+            const total = horasTrabajadas * tarifa;
+
+            // Agregar los datos al registro
+            const registroTabla = document.getElementById('registro');
+            const nuevaFila = document.createElement('tr');
+            nuevaFila.innerHTML = `
+                <td>${fecha}</td>
+                <td>${lugar}</td>
+                <td>${horasTrabajadas.toFixed(2)} horas</td>
+                <td>$${total.toFixed(2)}</td>
+            `;
+            registroTabla.appendChild(nuevaFila);
+
+            // Sumar al total mensual
+            totalMensual += total;
+            document.getElementById('totalMensual').textContent = `$${totalMensual.toFixed(2)}`;
+        }
+
+        function convertirHoraAMinutos(hora) {
+            const [horas, minutos] = hora.split(':').map(Number);
+            return horas * 60 + minutos;
+        }
+    </script>
+</body>
+</html>
